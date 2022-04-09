@@ -1,5 +1,6 @@
 package com.timer;
 
+import com.timer.tools.CountdownTextGenerator;
 import com.timer.tools.GifSequenceWriter;
 import com.timer.tools.ImageCreator;
 
@@ -7,21 +8,31 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        FileOutputStream fileOutputStream = new FileOutputStream("test.gif");
+        FileOutputStream fileOutputStream = new FileOutputStream("test1.gif");
         ImageOutputStream ios = ImageIO.createImageOutputStream(fileOutputStream);
 
         ImageCreator imageCreator = new ImageCreator();
+        List<String> countDownText = new CountdownTextGenerator().getCountDownText(
+                LocalDateTime.now().plus(20, ChronoUnit.SECONDS),
+                60, true, ":");
 
-        GifSequenceWriter gifSequenceWriter = new GifSequenceWriter(ios, TYPE_INT_ARGB, 1000, true);
-        gifSequenceWriter.writeToSequence(imageCreator.createImage("Just"));
-        gifSequenceWriter.writeToSequence(imageCreator.createImage("Gif"));
-        gifSequenceWriter.writeToSequence(imageCreator.createImage("Creation"));
-        gifSequenceWriter.writeToSequence(imageCreator.createImage("Demo"));
+        GifSequenceWriter gifSequenceWriter = new GifSequenceWriter(ios, TYPE_INT_ARGB, 1000, false);
+        int textSize = 78;
+        countDownText.forEach(t -> {
+            try {
+                gifSequenceWriter.writeToSequence(imageCreator.createImage(t, textSize));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         gifSequenceWriter.close();
         ios.close();
         fileOutputStream.close();

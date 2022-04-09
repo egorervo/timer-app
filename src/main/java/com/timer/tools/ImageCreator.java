@@ -1,25 +1,45 @@
 package com.timer.tools;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class ImageCreator {
-    public BufferedImage createImage(String text) {
-        int frameWith = 800;
-        BufferedImage image = new BufferedImage(frameWith, 600, BufferedImage.TYPE_INT_ARGB);
+
+    public static final int GENERAL_PADDING = 20;
+    private static final int GENERAL_TOP_PADDING = 10;
+
+    public BufferedImage createImage(String text, int textSize) {
+        Font font = new Font("Arial", Font.PLAIN, textSize);
+        Dimensions dimensions = getDimensions(font, text);
+
+        BufferedImage image = new BufferedImage(dimensions.getWidth(), dimensions.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();  // not sure on this line, but this seems more right
-        int textSize = 75;
-        Font font = new Font("Arial", Font.BOLD, textSize);
         graphics.setFont(font);
-        graphics.setColor(Color.BLACK);
-        graphics.fillRect(0, 0, frameWith, 600); // give the whole image a white background
+        graphics.setColor(Color.BLUE);
+        graphics.fillRect(0, 0, dimensions.getWidth(), dimensions.getHeight()); // give the whole image a white background
         graphics.setColor(Color.GREEN);
-        graphics.drawString(text, calculateCenterX(text, textSize, frameWith), 300);
+        graphics.drawString(text, GENERAL_PADDING / 2, dimensions.getHeight() - GENERAL_TOP_PADDING);
         graphics.dispose();
         return image;
     }
 
-    private int calculateCenterX(String text, int textSize, int frameWith) {
-        return text.length() * 10;
+    private Dimensions getDimensions(Font font, String text) {
+        AffineTransform affinetransform = new AffineTransform();
+        FontRenderContext frc = new FontRenderContext(affinetransform,true,true);
+        int frameWidth = (int) font.getStringBounds(text, frc).getWidth() + GENERAL_PADDING;
+        int frameHeight = (int) font.getStringBounds(text, frc).getHeight() + GENERAL_TOP_PADDING;
+        return new Dimensions(frameWidth, frameHeight);
+    }
+
+    @Data
+    @AllArgsConstructor
+    private static class Dimensions {
+        int width;
+        int height;
     }
 }
