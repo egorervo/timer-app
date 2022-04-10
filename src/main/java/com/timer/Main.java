@@ -1,11 +1,13 @@
 package com.timer;
 
+import com.timer.model.ImageTextParams;
 import com.timer.tools.CountdownTextGenerator;
 import com.timer.tools.GifSequenceWriter;
 import com.timer.tools.ImageCreator;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -23,16 +25,31 @@ public class Main {
         List<String> countDownText = new CountdownTextGenerator().getCountDownText(
                 LocalDateTime.now().plus(20, ChronoUnit.SECONDS),
                 60, true, ":");
+        int textSize = 55;
+        List<ImageTextParams> getCountDownTextParams = new CountdownTextGenerator().getCountDownTextParams(
+                LocalDateTime.now().plus(20, ChronoUnit.DAYS).plus(20, ChronoUnit.SECONDS),
+                60, true, true, ":");
+        List<BufferedImage> image = imageCreator.createImage(getCountDownTextParams, textSize);
 
         GifSequenceWriter gifSequenceWriter = new GifSequenceWriter(ios, TYPE_INT_ARGB, 1000, false);
-        int textSize = 78;
-        countDownText.forEach(t -> {
+
+        image.forEach(i -> {
             try {
-                gifSequenceWriter.writeToSequence(imageCreator.createImage(t, textSize));
+                gifSequenceWriter.writeToSequence(i);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
+
+//        countDownText.forEach(t -> {
+//            try {
+//                gifSequenceWriter.writeToSequence(imageCreator.createImage(t, textSize));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+
+
         gifSequenceWriter.close();
         ios.close();
         fileOutputStream.close();

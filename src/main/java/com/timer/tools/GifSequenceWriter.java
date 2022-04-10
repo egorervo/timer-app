@@ -47,7 +47,7 @@ public class GifSequenceWriter {
 
         IIOMetadataNode appExtensionsNode = getNode(root, "ApplicationExtensions");
         IIOMetadataNode child = new IIOMetadataNode("ApplicationExtension");
-        child.setAttribute("applicationID", "NETSCAPE");
+        child.setAttribute("applicationID", "timer-app");
         child.setAttribute("authenticationCode", "2.0");
 
         int loopContinuously = loop ? 0 : 1;
