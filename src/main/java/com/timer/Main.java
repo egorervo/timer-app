@@ -22,9 +22,7 @@ public class Main {
         ImageOutputStream ios = ImageIO.createImageOutputStream(fileOutputStream);
 
         ImageCreator imageCreator = new ImageCreator();
-        List<String> countDownText = new CountdownTextGenerator().getCountDownText(
-                LocalDateTime.now().plus(20, ChronoUnit.SECONDS),
-                60, true, ":");
+
         int textSize = 55;
         List<ImageTextParams> getCountDownTextParams = new CountdownTextGenerator().getCountDownTextParams(
                 LocalDateTime.now().plus(20, ChronoUnit.DAYS).plus(20, ChronoUnit.SECONDS),
@@ -40,15 +38,6 @@ public class Main {
                 e.printStackTrace();
             }
         });
-
-//        countDownText.forEach(t -> {
-//            try {
-//                gifSequenceWriter.writeToSequence(imageCreator.createImage(t, textSize));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
-
 
         gifSequenceWriter.close();
         ios.close();

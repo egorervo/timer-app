@@ -18,6 +18,7 @@ public class ImageCreator {
 
     public static final int GENERAL_PADDING = 20;
     private static final int GENERAL_TOP_PADDING = 20;
+    private static final int SEPARATOR_SPACE = 10;
 
     public BufferedImage createImage(String timeText, int textSize) {
         Font font = new Font("Arial", Font.PLAIN, textSize);
@@ -53,36 +54,47 @@ public class ImageCreator {
             int x = 0;
 
             if (imageTextParams.isIncludeDays()) {
-                graphics.drawString(imageTextParams.getDays(), x, gifDimension.getMaxHeight() / 2);
-                graphics.drawString(imageTextParams.getLabelDays(), x, gifDimension.getMaxHeight());
-
-                x += Math.max(imageDimensions.getDaysDimensions().getWidth(),
-                        imageDimensions.getDaysLabelDimensions().getWidth());
-
-                graphics.drawString(imageTextParams.getSeparator(), x,gifDimension.getMaxHeight() / 2);
-                x += imageDimensions.getSeparatorDimensions().getWidth();
+                x = addTextToPlot(gifDimension,
+                        imageTextParams.getDays(),
+                        imageTextParams.getLabelDays(),
+                        imageDimensions.getDaysDimensions().getWidth(),
+                        imageDimensions.getDaysLabelDimensions().getWidth(),
+                        graphics,
+                        x,
+                        imageTextParams.getSeparator(),
+                        imageDimensions.getSeparatorDimensions().getWidth());
             }
 
-            graphics.drawString(imageTextParams.getHours(), x, gifDimension.getMaxHeight() / 2);
-            graphics.drawString(imageTextParams.getLabelHours(), x, gifDimension.getMaxHeight());
+            x = addTextToPlot(gifDimension,
+                    imageTextParams.getHours(),
+                    imageTextParams.getLabelHours(),
+                    imageDimensions.getHoursDimensions().getWidth(),
+                    imageDimensions.getHoursLabelDimensions().getWidth(),
+                    graphics,
+                    x,
+                    imageTextParams.getSeparator(),
+                    imageDimensions.getSeparatorDimensions().getWidth());
 
-            x += Math.max(imageDimensions.getHoursDimensions().getWidth(),
-                    imageDimensions.getHoursLabelDimensions().getWidth());
 
-            graphics.drawString(imageTextParams.getSeparator(), x,gifDimension.getMaxHeight() / 2);
-            x += imageDimensions.getSeparatorDimensions().getWidth();
+            x = addTextToPlot(gifDimension,
+                    imageTextParams.getMinutes(),
+                    imageTextParams.getLabelMinute(),
+                    imageDimensions.getMinutesDimensions().getWidth(),
+                    imageDimensions.getMinutesLabelDimensions().getWidth(),
+                    graphics,
+                    x,
+                    imageTextParams.getSeparator(),
+                    imageDimensions.getSeparatorDimensions().getWidth());
 
-            graphics.drawString(imageTextParams.getMinutes(), x, gifDimension.getMaxHeight() / 2);
-            graphics.drawString(imageTextParams.getLabelMinute(), x, gifDimension.getMaxHeight());
-
-            x += Math.max(imageDimensions.getMinutesDimensions().getWidth(),
-                    imageDimensions.getMinutesLabelDimensions().getWidth());
-
-            graphics.drawString(imageTextParams.getSeparator(), x,gifDimension.getMaxHeight() / 2);
-            x += imageDimensions.getSeparatorDimensions().getWidth();
-
-            graphics.drawString(imageTextParams.getSeconds(), x, gifDimension.getMaxHeight() / 2);
-            graphics.drawString(imageTextParams.getLabelSeconds(), x, gifDimension.getMaxHeight());
+            addTextToPlot(gifDimension,
+                    imageTextParams.getSeconds(),
+                    imageTextParams.getLabelSeconds(),
+                    imageDimensions.getSecondsDimensions().getWidth(),
+                    imageDimensions.getSecondsLabelDimensions().getWidth(),
+                    graphics,
+                    x,
+                    null,
+                    0);
 
             graphics.dispose();
             images.add(image);
@@ -90,6 +102,31 @@ public class ImageCreator {
 
 
         return images;
+    }
+
+    private int addTextToPlot(GifDimensions gifDimension,
+                              String digits,
+                              String label,
+                              int digitWidth,
+                              int labelWidth,
+                              Graphics2D graphics,
+                              int x,
+                              String separator,
+                              int separatorWidth) {
+        int itemWidth = Math.max(digitWidth,
+                labelWidth);
+        int offset = Math.abs(labelWidth -
+                digitWidth) / 2;
+        boolean digitWidthLess = digitWidth < labelWidth;
+        graphics.drawString(digits, digitWidthLess ? x + offset : x, gifDimension.getMaxHeight() / 2);
+        graphics.drawString(label, digitWidthLess ? x : x + offset, gifDimension.getMaxHeight());
+        x += itemWidth;
+
+        if (null != separator) {
+            graphics.drawString(separator, x + SEPARATOR_SPACE, gifDimension.getMaxHeight() / 2);
+            x += separatorWidth + SEPARATOR_SPACE * 2;
+        }
+        return x;
     }
 
     private GifDimensions getGifDimension(List<ImageTextParams> params, Font font) {
