@@ -43,7 +43,6 @@ public class GifSequenceWriter {
         graphicsControlExtensionNode.setAttribute("transparentColorIndex", "0");
 
         IIOMetadataNode commentsNode = getNode(root, "CommentExtensions");
-        commentsNode.setAttribute("CommentExtension", "Created by: https://memorynotfound.com");
 
         IIOMetadataNode appExtensionsNode = getNode(root, "ApplicationExtensions");
         IIOMetadataNode child = new IIOMetadataNode("ApplicationExtension");
