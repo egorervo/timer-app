@@ -16,24 +16,9 @@ import java.util.List;
 
 public class ImageCreator {
 
-    public static final int GENERAL_PADDING = 20;
-    private static final int GENERAL_TOP_PADDING = 20;
+//    TODO should depend on font size
     private static final int SEPARATOR_SPACE = 10;
-
-    public BufferedImage createImage(String timeText, int textSize) {
-        Font font = new Font("Arial", Font.PLAIN, textSize);
-        Dimensions dimensions = getDimensions(font, timeText, GENERAL_PADDING, GENERAL_TOP_PADDING);
-
-        BufferedImage image = new BufferedImage(dimensions.getWidth(), dimensions.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = image.createGraphics();
-        graphics.setFont(font);
-        graphics.setColor(Color.BLUE);
-        graphics.fillRect(0, 0, dimensions.getWidth(), dimensions.getHeight());
-        graphics.setColor(Color.GREEN);
-        graphics.drawString(timeText, GENERAL_PADDING / 2, dimensions.getHeight() - GENERAL_TOP_PADDING * 2);
-        graphics.dispose();
-        return image;
-    }
+    public static final int HEIGHT_ADDON = 20;
 
     public List<BufferedImage> createImage(List<ImageTextParams> params, int textSize) {
         Font font = new Font("Arial", Font.PLAIN, textSize);
@@ -44,13 +29,13 @@ public class ImageCreator {
             ImageTextParams imageTextParams = params.get(i);
             ImageDimensions imageDimensions = gifDimension.getDimensions().get(i);
 
-            BufferedImage image = new BufferedImage(gifDimension.getMaxWidth(), gifDimension.getMaxHeight() + 20, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage image = new BufferedImage(gifDimension.getMaxWidth(), gifDimension.getMaxHeight() + HEIGHT_ADDON, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = image.createGraphics();
             graphics.setFont(font);
-            graphics.setColor(Color.BLUE);
-            graphics.fillRect(0, 0, gifDimension.getMaxWidth(), gifDimension.getMaxHeight() + 20);
+            graphics.setColor(Color.WHITE);
+            graphics.fillRect(0, 0, gifDimension.getMaxWidth(), gifDimension.getMaxHeight() + HEIGHT_ADDON);
 
-            graphics.setColor(Color.GREEN);
+            graphics.setColor(Color.BLACK);
             int x = 0;
 
             if (imageTextParams.isIncludeDays()) {
