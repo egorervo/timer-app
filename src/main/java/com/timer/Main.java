@@ -18,7 +18,7 @@ import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        for (int i = 8; i < 120; i += 10) {
+        for (int i = 10; i < 250; i += 10) {
             long start = System.currentTimeMillis();
             System.out.println("Start " + i + " size generate");
             try {

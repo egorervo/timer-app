@@ -16,30 +16,34 @@ import java.util.List;
 
 public class ImageCreator {
 
-//    TODO should depend on font size
-    private static final int SEPARATOR_SPACE = 10;
-    public static final int HEIGHT_ADDON = 20;
+    private int separatorSpace = 10;
+    private int heightAddon = 65;
+    private int widthAddon = 120;
 
     public List<BufferedImage> createImage(List<ImageTextParams> params, int textSize) {
         Font font = new Font("Arial", Font.PLAIN, textSize);
-        GifDimensions gifDimension = getGifDimension(params, font);
+        GifDimensions gifDimension = calculateGifDimension(params, font);
         List<BufferedImage> images = new ArrayList<>();
 
         for (int i = 0; i < params.size(); i++) {
             ImageTextParams imageTextParams = params.get(i);
             ImageDimensions imageDimensions = gifDimension.getDimensions().get(i);
 
-            BufferedImage image = new BufferedImage(gifDimension.getMaxWidth(), gifDimension.getMaxHeight() + HEIGHT_ADDON, BufferedImage.TYPE_INT_ARGB);
+            int frameHeight = gifDimension.getMaxHeight();
+            int frameWidth = gifDimension.getMaxWidth();
+
+            BufferedImage image = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = image.createGraphics();
             graphics.setFont(font);
             graphics.setColor(Color.WHITE);
-            graphics.fillRect(0, 0, gifDimension.getMaxWidth(), gifDimension.getMaxHeight() + HEIGHT_ADDON);
+            graphics.fillRect(0, 0, frameWidth, frameHeight);
 
             graphics.setColor(Color.BLACK);
             int x = 0;
 
             if (imageTextParams.isIncludeDays()) {
-                x = addTextToPlot(gifDimension,
+                x = addTextToPlot(frameHeight,
+                        textSize,
                         imageTextParams.getDays(),
                         imageTextParams.getLabelDays(),
                         imageDimensions.getDaysDimensions().getWidth(),
@@ -50,7 +54,8 @@ public class ImageCreator {
                         imageDimensions.getSeparatorDimensions().getWidth());
             }
 
-            x = addTextToPlot(gifDimension,
+            x = addTextToPlot(frameHeight,
+                    textSize,
                     imageTextParams.getHours(),
                     imageTextParams.getLabelHours(),
                     imageDimensions.getHoursDimensions().getWidth(),
@@ -61,7 +66,8 @@ public class ImageCreator {
                     imageDimensions.getSeparatorDimensions().getWidth());
 
 
-            x = addTextToPlot(gifDimension,
+            x = addTextToPlot(frameHeight,
+                    textSize,
                     imageTextParams.getMinutes(),
                     imageTextParams.getLabelMinute(),
                     imageDimensions.getMinutesDimensions().getWidth(),
@@ -71,7 +77,8 @@ public class ImageCreator {
                     imageTextParams.getSeparator(),
                     imageDimensions.getSeparatorDimensions().getWidth());
 
-            addTextToPlot(gifDimension,
+            addTextToPlot(frameHeight,
+                    textSize,
                     imageTextParams.getSeconds(),
                     imageTextParams.getLabelSeconds(),
                     imageDimensions.getSecondsDimensions().getWidth(),
@@ -89,7 +96,8 @@ public class ImageCreator {
         return images;
     }
 
-    private int addTextToPlot(GifDimensions gifDimension,
+    private int addTextToPlot(int frameHeight,
+                              int textSize,
                               String digits,
                               String label,
                               int digitWidth,
@@ -103,18 +111,19 @@ public class ImageCreator {
         int offset = Math.abs(labelWidth -
                 digitWidth) / 2;
         boolean digitWidthLess = digitWidth < labelWidth;
-        graphics.drawString(digits, digitWidthLess ? x + offset : x, gifDimension.getMaxHeight() / 2);
-        graphics.drawString(label, digitWidthLess ? x : x + offset, gifDimension.getMaxHeight());
+        graphics.drawString(digits, digitWidthLess ? x + offset : x, frameHeight / 2);
+        graphics.drawString(label, digitWidthLess ? x : x + offset,
+                frameHeight - TextPlacementUtil.getHeightTextVerticalOffset(textSize));
         x += itemWidth;
 
         if (null != separator) {
-            graphics.drawString(separator, x + SEPARATOR_SPACE, gifDimension.getMaxHeight() / 2);
-            x += separatorWidth + SEPARATOR_SPACE * 2;
+            graphics.drawString(separator, x + separatorSpace, frameHeight / 2);
+            x += separatorWidth + separatorSpace * 2;
         }
         return x;
     }
 
-    private GifDimensions getGifDimension(List<ImageTextParams> params, Font font) {
+    private GifDimensions calculateGifDimension(List<ImageTextParams> params, Font font) {
         int maxWidth = 0;
         int maxHeight = 0;
         GifDimensions res = new GifDimensions();
@@ -156,19 +165,19 @@ public class ImageCreator {
                 maxWidth = wl;
             }
             res.getDimensions().add(ImageDimensions.builder()
-                            .separatorDimensions(separatorDimensions)
-                            .daysDimensions(daysDimensions)
-                            .hoursDimensions(hoursDimensions)
-                            .minutesDimensions(minutesDimensions)
-                            .secondsDimensions(secondsDimensions)
-                            .daysLabelDimensions(daysLabelDimensions)
-                            .hoursLabelDimensions(hoursLabelDimensions)
-                            .minutesLabelDimensions(minutesLabelDimensions)
-                            .secondsLabelDimensions(secondsLabelDimensions)
+                    .separatorDimensions(separatorDimensions)
+                    .daysDimensions(daysDimensions)
+                    .hoursDimensions(hoursDimensions)
+                    .minutesDimensions(minutesDimensions)
+                    .secondsDimensions(secondsDimensions)
+                    .daysLabelDimensions(daysLabelDimensions)
+                    .hoursLabelDimensions(hoursLabelDimensions)
+                    .minutesLabelDimensions(minutesLabelDimensions)
+                    .secondsLabelDimensions(secondsLabelDimensions)
                     .build());
         }
-        res.setMaxHeight(maxHeight + 45);
-        res.setMaxWidth(maxWidth + 120);
+        res.setMaxHeight(maxHeight + heightAddon);
+        res.setMaxWidth(maxWidth + widthAddon);
         return res;
     }
 
